@@ -1,19 +1,17 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import ContactForm from './contact-form/ContactForm';
 import Contacts from './contacts/Contacts';
 
-const CONTACTS_LS_KEY = 'contacts';
-
 function App() {
   const [contacts, setContacts] = useState(() => {
-    const localData = JSON.parse(localStorage.getItem(CONTACTS_LS_KEY));
-    return localData || [];
+    const storedContacts = localStorage.getItem('contacts');
+    return storedContacts ? JSON.parse(storedContacts) : [];
   });
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    localStorage.setItem(CONTACTS_LS_KEY, JSON.stringify(contacts));
+    localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
   const handleAddContact = (name, number) => {
@@ -47,13 +45,12 @@ function App() {
   };
 
   const onFilterChange = e => {
-    const inputValue = e.target.value;
-    setFilter(inputValue);
+    setFilter(e.target.value);
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredContacts = contacts.filter(contact => {
+    return contact.name.toLowerCase().includes(filter.toLowerCase());
+  });
 
   return (
     <div>
